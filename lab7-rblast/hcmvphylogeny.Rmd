@@ -36,7 +36,7 @@ library(Biostrings)
 africa_ids <- grep("Africa", names(seqs), ignore.case = TRUE)
 africa_seqs = seqs[africa_ids]
 #subseqs <- subseq(africa_seqs, start = 20000, end = 50000)
-dist_matrix <- stringDist(africa_seqs, method = "hamming")
+dist_matrix <- pwalign::stringDist(africa_seqs, method = "hamming")
 ```
 
 Using this district matrix, we can use the 'ape' library to make different kinds of trees (for this one, we will use a neighbor joining algorithm)
@@ -59,7 +59,7 @@ In this question, you will generate a UPGMA phylogeny from the structure of a si
 
 In Table 1, the researchers show the sequence of nucleotides in 16 haplotypes at the ND3 site.  We will consider 5 haplotypes (slightly edited to make your answer more elegant-looking):
 #Use clustal online msa, and put them into a fasta format (example below)
-#>Hap 1
+#>Hap1, Cannot have the spaces between
 # sequence
 
 Hap 1: CTCTTAAATCCTATATTTATTTGATCGA
@@ -69,16 +69,42 @@ Hap 7: AACTCTCTTAAGTCCTATTTATGTTTGA
 Hap 8: ATCGCTCTCAAGTCCTATTTTTATTTGA
 
 Using CLUSTAL, load these 5 haplotypes and create an aligned fasta file.  Add the aligned fasta file to the github repository.
+#completed
 
 # Question 2:
 
 Calculate a distance matrix of these 5 haplotypes, treating each pairwise mutation (including each site in an indel) as a single unit of change. Using the calculated distance matrix, create a Neighbor-Joining tree of these 5 haplotypes.  Display this neighbor joining tree with ggtree.
 
+```{r}
+seqs <- readDNAStringSet("Aligned_Clustal_Q1.fa")
+dist_matrix <- pwalign::stringDist(seqs, method = "hamming")
+
+nj_tree <- nj(dist_matrix)
+ggtree(nj_tree) + 
+  geom_tiplab() + 
+  ggplot2::xlim(0, 15) +
+  theme_tree2()
+
+```
+
 # Question 3:
 
 This distance matrix treats each indel its own point mutation.  Filter these haplotypes to only contain sites where every haplotype has an associated nucleotide (so no indels), and display the neighbor joining tree for this data set.
+```{r}
+#remove dashes AND the letters in the same column in the other haps
+seqs <- readDNAStringSet("Aligned_Clustal_Q1.fa")
 
+#seqsNI <-gsub("-", "", seqs) , still kept the letters in the rows without -
+#seqsNI <- seqs[-c(1,4:20,23:26,29,31:36,39)] somehow removed Haps 3, 7, and 8?????
 
+dist_matrix <- pwalign::stringDist(seqsNI, method = "hamming")
+
+nj_tree <- nj(dist_matrix)
+ggtree(nj_tree) + 
+  geom_tiplab() + 
+  ggplot2::xlim(0, 15) +
+  theme_tree2()
+```
 
 
 

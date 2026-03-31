@@ -124,14 +124,18 @@ Isolate the 'hcmv15-hcmv1b-1.fasta' site in all 259 seqs. Your final result shou
 #Basically, show the string in ALIGN2 in ALL sequences, not just the one reference
 
 ```{r}
+
+library(Biostrings)
+seqs <- readDNAStringSet("Full_cmv_259sequences_Aln.fasta")
 query <- readDNAStringSet("hcmv15-hcmv1b-1.fasta")
 reversecompquery <- reverseComplement(query)
 query <- DNAString(toupper(as.character(query)))
 reversecompquery <- DNAString(toupper(as.character(reversecompquery)))
 
-ref <- seqs["hcmv15-hcmv1b-1.fasta"]
-ref <- DNAStringSet(gsub("-", "", as.character(ref))) 
+seqs249 <- gsub("-","", seqs)
+ref <- seqs249
 
+AlignALL <- matchPattern(reversecompquery, ref[[1]], max.mismatch=20)
 
-test <- matchPattern(reversecompquery, ref[[1]], max.mismatch=20)
+#Tried to remove all the - and stuff from all the sequences then align them all to the sequence of the reversecompquery. Im not entirely sure what this code did tbh
 ```
